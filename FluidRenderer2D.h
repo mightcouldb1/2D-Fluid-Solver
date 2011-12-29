@@ -8,7 +8,7 @@
 
 class FluidRenderer2D : public FluidRenderer
 {
-  const FluidSolver2D *_solver;
+  const FluidSolver2D &_solver;
 
 public:
   // Constructs a renderer that specifically handles 2D fluid simulations.
@@ -16,9 +16,9 @@ public:
   // wrapper.
   //
   // Arguments:
-  //   FluidSolver2D *solver - Pointer to a fluid solver object.
+  //   FluidSolver2D &solver - Const reference to a fluid solver object.
   //   QWidget *parent - Optional pointer to this widget's parent.
-  FluidRenderer2D(const FluidSolver2D *solver,
+  FluidRenderer2D(const FluidSolver2D &solver,
 		  QWidget *parent = NULL);
 
   // Destructor

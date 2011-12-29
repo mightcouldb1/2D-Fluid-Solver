@@ -24,3 +24,14 @@ void FluidSolver2D::draw(FluidRenderer2D *renderer) const
   renderer->drawGrid2D(_grid);
 }
 
+
+unsigned FluidSolver2D::getSimulationWidth() const
+{
+  return _colCount;
+}
+  
+
+unsigned FluidSolver2D::getSimulationHeight() const
+{
+  return _rowCount;
+}
