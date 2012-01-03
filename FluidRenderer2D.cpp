@@ -42,32 +42,39 @@ void FluidRenderer2D::initializeGL()
 
 void FluidRenderer2D::resizeGL(int width, int height)
 {
-  // Define viewport based on widget size.
-  glViewport(0, 0, width, height);
-  
   // Calculate an appropriate orthographic projection matrix to display the sim.
-  unsigned simWidth = _solver.getSimulationWidth() + 2;
-  unsigned simHeight = _solver.getSimulationHeight() + 2;
+  //----------------------------------------------------------------------------
 
-  float pixPerCellW = float(width) / float(simWidth);
-  float pixPerCellH = float(height) / float(simHeight);
+  // Define a viewport based on widget size.
+  glViewport(0, 0, width, height);
 
+  // For the purpose of fitting the grid within the rendering area, take into
+  // account a margin of 1 cell around the grid.
+  unsigned gridWidth = _solver.getSimulationWidth() + 2;
+  unsigned gridHeight = _solver.getSimulationHeight() + 2;
+
+  // Set default values for the projection matrix.  Directly using these values
+  // will result in the grid perfectly fitting within the rendering area, but
+  // the grid will be stretched according to the aspect ratio.
   float xMin = -1.0f;
-  float xMax = xMin + simWidth;
+  float xMax = xMin + gridWidth;
   float yMin = -1.0;
-  float yMax = yMin + simHeight;
+  float yMax = yMin + gridHeight;
   
-  printf("W: %f,  H: %f\n", pixPerCellW, pixPerCellH);
-
-  if (pixPerCellW > pixPerCellH) {
+  // Calculate the ratio of rendering area pixels per cell along each axis.
+  float pixPerCellW = float(width) / float(gridWidth);
+  float pixPerCellH = float(height) / float(gridHeight);
+  if (pixPerCellW < pixPerCellH) {
     // Width is the dominant dimension.
-    yMin *= float(height) / float(width);
-    yMax *= float(height) / float(width);
+    float simHeight = float(gridWidth) * float(height) / float(width);
+    yMin = -(simHeight - _solver.getSimulationHeight()) / 2;
+    yMax = yMin + simHeight;
   }
   else {
     // Height is the dominant dimension.
-    xMin *= float(width) / float(height);
-    xMax *= float(width) / float(height);
+    float simWidth = float(gridHeight) * float(width) / float(height);
+    xMin = -(simWidth - _solver.getSimulationWidth()) / 2;
+    xMax = xMin + simWidth;
   }
   
   // Define projection matrix based on widget size.
