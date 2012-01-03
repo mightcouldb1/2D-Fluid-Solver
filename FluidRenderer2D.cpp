@@ -108,9 +108,11 @@ void FluidRenderer2D::drawGrid2D(const Grid2D &grid)
   float height = grid.getRowCount();
   float width  = grid.getColCount();
 
-  // Draw the vertical and horizontal grid lines.
+  // Store previous OpenGL state.
   glPushAttrib(GL_CURRENT_BIT);
-  glColor4f(0.0f, 0.0f, 1.0f, 0.5f);
+
+  // Draw the vertical and horizontal grid lines.
+  glColor4f(1.0f, 1.0f, 1.0f, 0.5f);
   glBegin(GL_LINES);
   for (unsigned i = 0; i <= grid.getColCount(); ++i) {
     glVertex2f(i, 0);
@@ -121,8 +123,26 @@ void FluidRenderer2D::drawGrid2D(const Grid2D &grid)
     glVertex2f(width, i);
   }
   glEnd();
-  glPopAttrib();
 
-  // Draw the cells based on the 
+  // Color the cells blue if they currently contain liquid.
+  for (unsigned row = 0; row < grid.getRowCount(); ++row) {
+    for (unsigned col = 0; col < grid.getColCount(); ++col) {
+      if (grid(row, col).getIsLiquid()) {
+	// TODO, this is all in immediate mode for illustrative purposes.
+	glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+	glBegin(GL_TRIANGLES);
+	glVertex2f(col, row);
+	glVertex2f(col+1, row);
+	glVertex2f(col+1, row+1);
+	glVertex2f(col+1, row+1);
+	glVertex2f(col, row+1);
+	glVertex2f(col, row);
+	glEnd();
+      }
+    }
+  }
+
+  // Restore previous OpenGL state.
+  glPopAttrib();
 
 }
